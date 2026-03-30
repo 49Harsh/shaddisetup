@@ -1,0 +1,16 @@
+# Environment variables - KABHI PUSH MAT KARO
+**/.env
+**/.env.local
+**/.env.production
+**/.env*.local
+
+# Dependencies
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/.next/
+
+# OS
+.DS_Store
+Thumbs.db
