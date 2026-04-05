@@ -9,7 +9,6 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   phone         String   @unique @default("")
   email         String?  @unique
   full_name     String   @default("")
@@ -21,6 +20,7 @@ model User {
   profile_photo String?
   created_at    DateTime @default(now()) @db.Timestamptz(6)
   updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   admin         Admin?
   vendor        Vendor?
 
@@ -28,32 +28,59 @@ model User {
 }
 
 model Vendor {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id          String   @unique @db.Uuid
   business_name    String
-  service_types    String[] @default([])
+  service_types    String[]          @default([])
   experience_years Int?
   village          String?
   block            String
   district         String
   phone            String
-  created_at       DateTime @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  created_at       DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String            @unique @db.Uuid
+  vendor_services  vendor_services[]
+  user             User              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("vendors")
 }
 
 model Admin {
-  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id     String     @unique @db.Uuid
   admin_level AdminLevel @default(moderator)
   permissions String[]   @default([])
   last_login  DateTime?  @db.Timestamptz(6)
   created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String     @unique @db.Uuid
   user        User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("admins")
+}
+
+model vendor_service_images {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_id      String          @db.Uuid
+  url             String
+  public_id       String
+  is_main         Boolean         @default(false)
+  vendor_services vendor_services @relation(fields: [service_id], references: [id], onDelete: Cascade)
+}
+
+model vendor_services {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vendor_id             String                  @db.Uuid
+  service_type          ServiceType
+  name                  String
+  actual_price          Float
+  selling_price         Float
+  description           String                  @default("")
+  is_active             Boolean                 @default(true)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  main_image            String                  @default("")
+  images                String[]                @default([])
+  vendor_service_images vendor_service_images[]
+  vendors               Vendor                  @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
 }
 
 enum Role {
@@ -65,4 +92,11 @@ enum Role {
 enum AdminLevel {
   super_admin
   moderator
+}
+
+enum ServiceType {
+  DJ
+  Catering
+  Decoration
+  Mehndi
 }

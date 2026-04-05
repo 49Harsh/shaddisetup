@@ -49,6 +49,14 @@ export default function Dashboard() {
 
         {/* Quick Links */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 28 }}>
+          {user.role === "vendor" && (
+            <Link href="/vendor/services" style={{ textDecoration: "none" }}>
+              <div style={{ background: "#b5451b", borderRadius: 12, padding: "24px 20px", textAlign: "center", cursor: "pointer" }}>
+                <div style={{ fontSize: 36, marginBottom: 8 }}>📦</div>
+                <p style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>मेरी Services Manage करें</p>
+              </div>
+            </Link>
+          )}
           {[
             { icon: "🌸", label: "डेकोरेशन देखें", href: "/services/decoration" },
             { icon: "🎵", label: "DJ / बैंड देखें", href: "/services/dj-band" },
