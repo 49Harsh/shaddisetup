@@ -98,6 +98,11 @@ export default function Navbar() {
                     <span>👤</span> मेरा Dashboard
                   </Link>
 
+                  <Link href="/my-orders" onClick={() => setDropdownOpen(false)}
+                    style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", color: "#333", fontSize: 15, fontWeight: 600, borderBottom: "1px solid #f0f0f0" }}>
+                    <span>📋</span> मेरे Orders
+                  </Link>
+
                   {/* Logout */}
                   <button onClick={logout}
                     style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", background: "none", border: "none", color: "#e53e3e", fontSize: 15, fontWeight: 600, cursor: "pointer", textAlign: "left" }}>

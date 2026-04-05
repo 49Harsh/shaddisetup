@@ -81,6 +81,16 @@ export default function Dashboard() {
                 + Service Add करें
               </Link>
             )}
+            {user.role === "vendor" && (
+              <Link href="/vendor/orders" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", padding: "10px 20px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", border: "1.5px solid rgba(255,255,255,0.3)" }}>
+                📋 Orders देखें
+              </Link>
+            )}
+            {user.role === "user" && (
+              <Link href="/my-orders" style={{ background: "#fff", color: "#b5451b", padding: "10px 20px", borderRadius: 8, fontWeight: 800, fontSize: 14, textDecoration: "none" }}>
+                📋 मेरे Orders
+              </Link>
+            )}
             <button onClick={logout} style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "2px solid rgba(255,255,255,0.4)", padding: "10px 20px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: 14 }}>
               लॉगआउट
             </button>
