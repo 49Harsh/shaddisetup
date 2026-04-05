@@ -5,7 +5,8 @@ import { uploadImage } from "../lib/cloudinary";
 import { authenticate, requireRole, AuthRequest } from "../middleware/auth.middleware";
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const upload = (multer as any)({ storage: multer.memoryStorage() });
 
 type SType = "DJ" | "Catering" | "Decoration" | "Mehndi";
 
