@@ -22,7 +22,12 @@ export default function ServiceDetailPage() {
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services/${id}`)
       .then(r => r.json())
-      .then(d => { setService(d); setActiveImg(d.main_image || ""); setLoading(false); })
+      .then(d => { 
+        if (d) d.vendor = d.vendor || d.vendors || {};
+        setService(d); 
+        setActiveImg(d.main_image || ""); 
+        setLoading(false); 
+      })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -70,7 +75,7 @@ export default function ServiceDetailPage() {
               </span>
               <h1 style={{ fontSize: 26, fontWeight: 900, color: "#111", margin: "12px 0 8px" }}>{service.name}</h1>
               <p style={{ fontSize: 14, color: "#888", marginBottom: 16 }}>
-                🏪 {service.vendor.business_name} · 📍 {service.vendor.district}, {service.vendor.block}
+                🏪 {service.vendor?.business_name || "Unknown"} · 📍 {service.vendor?.district || "Unknown"}, {service.vendor?.block || "Unknown"}
               </p>
 
               {/* Price Box */}
@@ -91,12 +96,12 @@ export default function ServiceDetailPage() {
 
               {/* CTA */}
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <a href={`https://wa.me/91${service.vendor.phone}?text=नमस्ते! मुझे "${service.name}" service के बारे में जानकारी चाहिए।`}
+                <a href={`https://wa.me/91${service.vendor?.phone || ""}?text=नमस्ते! मुझे "${service.name}" service के बारे में जानकारी चाहिए।`}
                   target="_blank" rel="noopener noreferrer"
                   style={{ background: "#25D366", color: "#fff", padding: 14, borderRadius: 10, fontWeight: 800, fontSize: 16, textDecoration: "none", textAlign: "center" }}>
                   💬 WhatsApp पर Book करें
                 </a>
-                <a href={`tel:+91${service.vendor.phone}`}
+                <a href={`tel:+91${service.vendor?.phone || ""}`}
                   style={{ background: "#f5f5f5", color: "#333", padding: 14, borderRadius: 10, fontWeight: 700, fontSize: 16, textDecoration: "none", textAlign: "center", border: "1.5px solid #eee" }}>
                   📞 Call करें
                 </a>
