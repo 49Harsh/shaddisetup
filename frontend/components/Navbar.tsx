@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 const navLinks = [
   { href: "/", label: "होम" },
+  { href: "/browse", label: "Services देखें" },
   { href: "/services/decoration", label: "डेकोरेशन" },
   { href: "/services/dj-band", label: "DJ / बैंड" },
   { href: "/services/catering", label: "कैटरिंग" },
@@ -112,10 +113,10 @@ export default function Navbar() {
             </Link>
           )}
 
-          <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer"
+          {/* <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer"
             style={{ background: "#25D366", color: "#fff", padding: "10px 16px", borderRadius: 8, fontWeight: 700, fontSize: 15, textDecoration: "none" }}>
             💬 WhatsApp
-          </a>
+          </a> */}
         </div>
 
         {/* Hamburger */}
@@ -150,10 +151,10 @@ export default function Navbar() {
               लॉगिन करें
             </Link>
           )}
-          <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer"
+          {/* <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer"
             style={{ display: "block", marginTop: 12, background: "#25D366", color: "#fff", padding: "12px 20px", borderRadius: 8, fontWeight: 700, fontSize: 16, textDecoration: "none", textAlign: "center" }}>
             💬 WhatsApp करें
-          </a>
+          </a> */}
         </div>
       )}
 
