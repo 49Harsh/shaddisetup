@@ -36,8 +36,8 @@ router.post("/google", async (req: Request, res: Response): Promise<void> => {
         data: {
           email: user.email!,
           full_name: user.user_metadata?.full_name || user.email!.split("@")[0],
-          phone: "",        // Profile complete step mein bharega
-          block: "",        // Profile complete step mein bharega
+          phone: user.email!,  // email as placeholder — unique rehega
+          block: "",
           district: "",
           pincode: "",
           role: "user",
