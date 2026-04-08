@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type Order = {
-  id: string; status: string; event_date: string; message: string; created_at: string;
+  id: string; service_id: string; status: string; event_date: string; message: string; created_at: string;
   vendor_services: { name: string; service_type: string; selling_price: number; main_image: string };
 };
 
@@ -87,7 +87,7 @@ export default function MyOrdersPage() {
 
                     {/* Action */}
                     <div style={{ display: "flex", flexDirection: "column", gap: 8, justifyContent: "center" }}>
-                      <Link href={`/browse/${o.vendor_services ? o.id : ""}`}
+                      <Link href={`/services/detail/${o.service_id}`}
                         style={{ background: "#f5f5f5", color: "#333", padding: "8px 16px", borderRadius: 8, fontWeight: 700, fontSize: 13, textDecoration: "none", textAlign: "center" }}>
                         👁 देखें
                       </Link>
