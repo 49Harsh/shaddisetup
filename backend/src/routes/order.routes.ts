@@ -28,6 +28,19 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response): Promise<
   } catch (e) { console.error(e); res.status(500).json({ error: "Server error." }); }
 });
 
+// GET /api/orders/check?service_id=X — user ka confirmed order check karo
+router.get("/check", authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
+  const { service_id } = req.query;
+  if (!service_id) { res.status(400).json({ error: "service_id required." }); return; }
+  try {
+    const order = await db.orders.findFirst({
+      where: { user_id: req.userId, service_id: String(service_id), status: "confirmed" },
+    });
+    res.json({ hasConfirmedOrder: !!order });
+  } catch (e) { console.error(e); res.status(500).json({ error: "Server error." }); }
+});
+
+
 // GET /api/orders/my — user: apne orders
 router.get("/my", authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
