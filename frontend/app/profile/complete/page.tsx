@@ -17,7 +17,14 @@ export default function CompleteProfile() {
     const user = localStorage.getItem("user");
     if (user) {
       const u = JSON.parse(user);
+      // Agar profile already complete hai toh dashboard pe bhejo
+      if (u.phone && u.phone !== u.email && u.block && u.district && u.pincode) {
+        router.push("/dashboard");
+        return;
+      }
       setForm(f => ({ ...f, full_name: u.full_name || "" }));
+    } else {
+      router.push("/login");
     }
   }, []);
 

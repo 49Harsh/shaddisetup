@@ -20,7 +20,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         ...(type ? { service_type: type as SType } : {}),
         ...(district ? { vendors: { district: String(district) } } : {}),
       },
-      include: { vendors: { select: { business_name: true, phone: true, district: true, block: true } } },
+      include: { vendors: { select: { business_name: true, phone: true, district: true, block: true, working_hours: true, experience_years: true, experience_desc: true } } },
       orderBy: { created_at: "desc" },
     });
     res.json(services);
@@ -45,7 +45,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
   try {
     const service = await prisma.vendor_services.findUnique({
       where: { id: req.params.id },
-      include: { vendors: { select: { business_name: true, phone: true, district: true, block: true } } },
+      include: { vendors: { select: { business_name: true, phone: true, district: true, block: true, working_hours: true, experience_years: true, experience_desc: true } } },
     });
     if (!service) { res.status(404).json({ error: "Service nahi mili." }); return; }
     res.json(service);

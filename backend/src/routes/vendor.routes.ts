@@ -42,11 +42,11 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
 
 // PUT /api/vendors/me - Vendor apni details update kare
 router.put("/me", authenticate, requireRole("vendor"), async (req: AuthRequest, res: Response): Promise<void> => {
-  const { business_name, service_types, experience_years, village, block, district, phone } = req.body;
+  const { business_name, service_types, experience_years, experience_desc, working_hours, village, block, district, phone } = req.body;
   try {
     const updated = await prisma.vendor.update({
       where: { user_id: req.userId },
-      data: { business_name, service_types, experience_years, village, block, district, phone },
+      data: { business_name, service_types, experience_years, experience_desc, working_hours, village, block, district, phone },
     });
     res.json(updated);
   } catch {

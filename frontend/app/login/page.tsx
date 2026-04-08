@@ -6,7 +6,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<"options" | "manual" | "otp">("options");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
-  const [form, setForm] = useState({ full_name: "", email: "", phone: "" });
+  const [form, setForm] = useState({ full_name: "", email: "" });
   const [otp, setOtp] = useState("");
 
   // Google Login
@@ -23,14 +23,14 @@ export default function LoginPage() {
   // Manual - Step 1: Send Magic Link
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.full_name || !form.email || !form.phone) {
-      setMsg("सभी fields भरें।"); return;
+    if (!form.email) {
+      setMsg("Email भरें।"); return;
     }
     setLoading(true); setMsg("");
     const { error } = await supabase.auth.signInWithOtp({
       email: form.email,
       options: {
-        data: { full_name: form.full_name, phone: form.phone },
+        data: { full_name: form.full_name },
         shouldCreateUser: true,
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
@@ -62,6 +62,7 @@ export default function LoginPage() {
       if (result.token) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.user));
+        window.dispatchEvent(new Event("storage"));
         window.location.href = result.user.profileComplete ? "/dashboard" : "/profile/complete";
       } else {
         setMsg(result.error || "Kuch galat hua.");
@@ -121,23 +122,19 @@ export default function LoginPage() {
         {/* MANUAL FORM */}
         {mode === "manual" && (
           <form onSubmit={sendOtp}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 4 }}>पूरा नाम *</label>
+            <label style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 4 }}>पूरा नाम (optional)</label>
             <input style={inputStyle} placeholder="राम कुमार शर्मा" value={form.full_name}
-              onChange={e => setForm({ ...form, full_name: e.target.value })} required />
+              onChange={e => setForm({ ...form, full_name: e.target.value })} />
 
             <label style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 4 }}>Gmail / Email *</label>
             <input style={inputStyle} type="email" placeholder="example@gmail.com" value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })} required />
 
-            <label style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 4 }}>मोबाइल नंबर *</label>
-            <input style={inputStyle} placeholder="+91 9999999999" value={form.phone}
-              onChange={e => setForm({ ...form, phone: e.target.value })} required />
-
             {msg && <p style={{ color: "red", fontSize: 13, marginBottom: 10 }}>{msg}</p>}
 
             <button type="submit" disabled={loading}
               style={{ width: "100%", background: "#b5451b", color: "#fff", border: "none", borderRadius: 10, padding: "13px", fontSize: 16, fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
-              {loading ? "भेज रहे हैं..." : "OTP भेजें →"}
+              {loading ? "भेज रहे हैं..." : "Login Link भेजें →"}
             </button>
             <button type="button" onClick={() => { setMode("options"); setMsg(""); }}
               style={{ width: "100%", background: "none", border: "none", color: "#888", fontSize: 14, cursor: "pointer" }}>

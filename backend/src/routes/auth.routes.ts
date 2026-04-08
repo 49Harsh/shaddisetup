@@ -59,7 +59,7 @@ router.post("/google", async (req: Request, res: Response): Promise<void> => {
         email: dbUser.email,
         full_name: dbUser.full_name,
         role: dbUser.role,
-        profileComplete: !!(dbUser.phone && dbUser.block && dbUser.district && dbUser.pincode),
+        profileComplete: !!(dbUser.phone && dbUser.phone !== dbUser.email && dbUser.block && dbUser.district && dbUser.pincode),
       },
     });
   } catch (err) {
