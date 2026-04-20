@@ -8,7 +8,11 @@ const router = Router();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const upload = (multer as any)({ storage: multer.memoryStorage() });
 
-type SType = "DJ" | "Catering" | "Decoration" | "Mehndi";
+type SType =
+  | "DJ" | "Catering" | "Decoration" | "Mehndi"
+  | "BhoomiPooja" | "GrihaPravesh" | "VastuShanti" | "VahaanPooja"
+  | "DukaanUdghatan" | "SatyanarayanKatha" | "GaneshChaturthi" | "LakshmiPooja"
+  | "NavratriPooja" | "MahaMrityunjayaJaap" | "KundaliMilan" | "GrahaShanti" | "Rudrabhishek";
 
 // GET /api/services — public, sirf active
 router.get("/", async (req: Request, res: Response): Promise<void> => {

@@ -20,7 +20,22 @@ type RatingData = {
   ratings: { id: string; rating: number; review: string; created_at: string; users: { full_name: string } }[];
 };
 
-const ICONS: Record<string, string> = { DJ: "🎵", Catering: "🍽️", Decoration: "🌸", Mehndi: "🎨" };
+const ICONS: Record<string, string> = {
+  DJ: "🎵", Catering: "🍽️", Decoration: "🌸", Mehndi: "🎨",
+  BhoomiPooja: "🏗️", GrihaPravesh: "🏠", VastuShanti: "🕊️", VahaanPooja: "🚗",
+  DukaanUdghatan: "🏪", SatyanarayanKatha: "📖", GaneshChaturthi: "🐘",
+  LakshmiPooja: "🪔", NavratriPooja: "🌺", MahaMrityunjayaJaap: "🔱",
+  KundaliMilan: "💍", GrahaShanti: "⭐", Rudrabhishek: "🙏",
+};
+const SERVICE_LABELS: Record<string, string> = {
+  DJ: "DJ", Catering: "Catering", Decoration: "Decoration", Mehndi: "Mehndi",
+  BhoomiPooja: "Bhoomi Pooja", GrihaPravesh: "Griha Pravesh", VastuShanti: "Vastu Shanti",
+  VahaanPooja: "Vahaan Pooja", DukaanUdghatan: "Dukaan Udghatan",
+  SatyanarayanKatha: "Satyanarayan Katha", GaneshChaturthi: "Ganesh Chaturthi",
+  LakshmiPooja: "Lakshmi Pooja (Diwali)", NavratriPooja: "Navratri Pooja",
+  MahaMrityunjayaJaap: "Maha Mrityunjaya Jaap", KundaliMilan: "Kundali Milan",
+  GrahaShanti: "Graha Shanti", Rudrabhishek: "Rudrabhishek",
+};
 
 function StarDisplay({ avg, big }: { avg: number; big?: boolean }) {
   const size = big ? 18 : 14;
@@ -179,7 +194,7 @@ export default function ServiceDetailPage() {
             {/* Right — Details + Order Form */}
             <div>
               <span style={{ fontSize: 13, background: "#f5f5f5", color: "#555", padding: "3px 12px", borderRadius: 20, fontWeight: 600 }}>
-                {ICONS[service.service_type]} {service.service_type}
+                {ICONS[service.service_type] || "🙏"} {SERVICE_LABELS[service.service_type] || service.service_type}
               </span>
               <h1 style={{ fontSize: 26, fontWeight: 900, color: "#111", margin: "12px 0 6px" }}>{service.name}</h1>
               <p style={{ fontSize: 14, color: "#888", marginBottom: 8 }}>

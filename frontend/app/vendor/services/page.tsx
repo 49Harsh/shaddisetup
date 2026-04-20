@@ -4,8 +4,28 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const SERVICE_TYPES = ["DJ", "Catering", "Decoration", "Mehndi"];
-const ICONS: Record<string, string> = { DJ: "🎵", Catering: "🍽️", Decoration: "🌸", Mehndi: "🎨" };
+const SERVICE_TYPES = [
+  "DJ", "Catering", "Decoration", "Mehndi",
+  "BhoomiPooja", "GrihaPravesh", "VastuShanti", "VahaanPooja",
+  "DukaanUdghatan", "SatyanarayanKatha", "GaneshChaturthi", "LakshmiPooja",
+  "NavratriPooja", "MahaMrityunjayaJaap", "KundaliMilan", "GrahaShanti", "Rudrabhishek",
+];
+const ICONS: Record<string, string> = {
+  DJ: "🎵", Catering: "🍽️", Decoration: "🌸", Mehndi: "🎨",
+  BhoomiPooja: "🏗️", GrihaPravesh: "🏠", VastuShanti: "🕊️", VahaanPooja: "🚗",
+  DukaanUdghatan: "🏪", SatyanarayanKatha: "📖", GaneshChaturthi: "🐘",
+  LakshmiPooja: "🪔", NavratriPooja: "🌺", MahaMrityunjayaJaap: "🔱",
+  KundaliMilan: "💍", GrahaShanti: "⭐", Rudrabhishek: "🙏",
+};
+const SERVICE_LABELS: Record<string, string> = {
+  DJ: "DJ", Catering: "Catering", Decoration: "Decoration", Mehndi: "Mehndi",
+  BhoomiPooja: "Bhoomi Pooja", GrihaPravesh: "Griha Pravesh", VastuShanti: "Vastu Shanti",
+  VahaanPooja: "Vahaan Pooja", DukaanUdghatan: "Dukaan Udghatan",
+  SatyanarayanKatha: "Satyanarayan Katha", GaneshChaturthi: "Ganesh Chaturthi",
+  LakshmiPooja: "Lakshmi Pooja (Diwali)", NavratriPooja: "Navratri Pooja",
+  MahaMrityunjayaJaap: "Maha Mrityunjaya Jaap", KundaliMilan: "Kundali Milan",
+  GrahaShanti: "Graha Shanti", Rudrabhishek: "Rudrabhishek",
+};
 
 type Service = {
   id: string; service_type: string; name: string;
@@ -176,7 +196,7 @@ export default function VendorServicesPage() {
                   </div>
 
                   <div style={{ padding: 16 }}>
-                    <span style={{ fontSize: 12, background: "#f5f5f5", color: "#555", padding: "2px 10px", borderRadius: 20, fontWeight: 600 }}>{ICONS[s.service_type]} {s.service_type}</span>
+                    <span style={{ fontSize: 12, background: "#f5f5f5", color: "#555", padding: "2px 10px", borderRadius: 20, fontWeight: 600 }}>{ICONS[s.service_type] || "🙏"} {SERVICE_LABELS[s.service_type] || s.service_type}</span>
                     <h3 style={{ fontSize: 17, fontWeight: 800, color: "#111", margin: "8px 0 4px" }}>{s.name}</h3>
                     <p style={{ fontSize: 13, color: "#777", marginBottom: 10, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const }}>{s.description}</p>
 
@@ -217,7 +237,19 @@ export default function VendorServicesPage() {
               <label style={lbl}>Service Type *</label>
               <select style={inp} value={form.service_type} onChange={e => setForm({ ...form, service_type: e.target.value })} required>
                 <option value="">-- Select Service Type --</option>
-                {SERVICE_TYPES.map(t => <option key={t} value={t}>{ICONS[t]} {t}</option>)}
+                <optgroup label="Wedding Services">
+                  {["DJ","Catering","Decoration","Mehndi"].map(t => (
+                    <option key={t} value={t}>{ICONS[t]} {SERVICE_LABELS[t]}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Pooja Services">
+                  {["BhoomiPooja","GrihaPravesh","VastuShanti","VahaanPooja",
+                    "DukaanUdghatan","SatyanarayanKatha","GaneshChaturthi","LakshmiPooja",
+                    "NavratriPooja","MahaMrityunjayaJaap","KundaliMilan","GrahaShanti","Rudrabhishek"
+                  ].map(t => (
+                    <option key={t} value={t}>{ICONS[t]} {SERVICE_LABELS[t]}</option>
+                  ))}
+                </optgroup>
               </select>
 
               {/* Name */}

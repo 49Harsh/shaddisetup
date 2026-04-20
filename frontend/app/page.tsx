@@ -20,6 +20,13 @@ const services = [
     desc: "स्वादिष्ट खाना, चेयर-टेबल सेटअप, पूरा इवेंट मैनेजमेंट।",
     href: "/services/catering",
   },
+  {
+    icon: "🙏",
+    title: "Pooja Services",
+    desc: "Bhoomi Pooja, Griha Pravesh, Satyanarayan Katha, Rudrabhishek — घर बैठे Expert Pandit Book करें।",
+    href: "/pooja",
+    highlight: true,
+  },
 ];
 
 const whyUs = [
@@ -71,11 +78,21 @@ export default function HomePage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 28 }}>
             {services.map((s) => (
               <Link key={s.href} href={s.href} style={{ textDecoration: "none" }}>
-                <div style={{ background: "#fff", borderRadius: 16, padding: "36px 28px", border: "1.5px solid #eee", cursor: "pointer", height: "100%" }}>
+                <div style={{
+                  background: (s as {highlight?:boolean}).highlight
+                    ? "linear-gradient(135deg,#7c2d12,#b5451b)"
+                    : "#fff",
+                  borderRadius: 16,
+                  padding: "36px 28px",
+                  border: (s as {highlight?:boolean}).highlight ? "none" : "1.5px solid #eee",
+                  cursor: "pointer",
+                  height: "100%",
+                  color: (s as {highlight?:boolean}).highlight ? "#fff" : "inherit",
+                }}>
                   <div style={{ fontSize: 52, marginBottom: 16 }}>{s.icon}</div>
-                  <h3 style={{ fontSize: 24, fontWeight: 800, color: "#111", marginBottom: 10 }}>{s.title}</h3>
-                  <p style={{ fontSize: 16, color: "#555", lineHeight: 1.7 }}>{s.desc}</p>
-                  <span style={{ display: "inline-block", marginTop: 20, color: "#b5451b", fontWeight: 700, fontSize: 15 }}>
+                  <h3 style={{ fontSize: 24, fontWeight: 800, marginBottom: 10, color: (s as {highlight?:boolean}).highlight ? "#fff" : "#111" }}>{s.title}</h3>
+                  <p style={{ fontSize: 16, lineHeight: 1.7, color: (s as {highlight?:boolean}).highlight ? "rgba(255,255,255,0.85)" : "#555" }}>{s.desc}</p>
+                  <span style={{ display: "inline-block", marginTop: 20, fontWeight: 700, fontSize: 15, color: (s as {highlight?:boolean}).highlight ? "#fcd9b6" : "#b5451b" }}>
                     और जानें →
                   </span>
                 </div>

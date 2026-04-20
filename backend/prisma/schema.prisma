@@ -135,4 +135,17 @@ enum ServiceType {
   Catering
   Decoration
   Mehndi
+  BhoomiPooja
+  GrihaPravesh
+  VastuShanti
+  VahaanPooja
+  DukaanUdghatan
+  SatyanarayanKatha
+  GaneshChaturthi
+  LakshmiPooja
+  NavratriPooja
+  MahaMrityunjayaJaap
+  KundaliMilan
+  GrahaShanti
+  Rudrabhishek
 }

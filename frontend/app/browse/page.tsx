@@ -13,8 +13,28 @@ type Service = {
   ratingInfo?: RatingInfo;
 };
 
-const TYPES = ["सभी", "DJ", "Catering", "Decoration", "Mehndi"];
-const ICONS: Record<string, string> = { DJ: "🎵", Catering: "🍽️", Decoration: "🌸", Mehndi: "🎨" };
+const TYPES = [
+  "सभी", "DJ", "Catering", "Decoration", "Mehndi",
+  "BhoomiPooja", "GrihaPravesh", "VastuShanti", "VahaanPooja",
+  "DukaanUdghatan", "SatyanarayanKatha", "GaneshChaturthi", "LakshmiPooja",
+  "NavratriPooja", "MahaMrityunjayaJaap", "KundaliMilan", "GrahaShanti", "Rudrabhishek",
+];
+const ICONS: Record<string, string> = {
+  DJ: "🎵", Catering: "🍽️", Decoration: "🌸", Mehndi: "🎨",
+  BhoomiPooja: "🏗️", GrihaPravesh: "🏠", VastuShanti: "🕊️", VahaanPooja: "🚗",
+  DukaanUdghatan: "🏪", SatyanarayanKatha: "📖", GaneshChaturthi: "🐘",
+  LakshmiPooja: "🪔", NavratriPooja: "🌺", MahaMrityunjayaJaap: "🔱",
+  KundaliMilan: "💍", GrahaShanti: "⭐", Rudrabhishek: "🙏",
+};
+const SERVICE_LABELS: Record<string, string> = {
+  DJ: "DJ", Catering: "Catering", Decoration: "Decoration", Mehndi: "Mehndi",
+  BhoomiPooja: "Bhoomi Pooja", GrihaPravesh: "Griha Pravesh", VastuShanti: "Vastu Shanti",
+  VahaanPooja: "Vahaan Pooja", DukaanUdghatan: "Dukaan Udghatan",
+  SatyanarayanKatha: "Satyanarayan Katha", GaneshChaturthi: "Ganesh Chaturthi",
+  LakshmiPooja: "Lakshmi Pooja (Diwali)", NavratriPooja: "Navratri Pooja",
+  MahaMrityunjayaJaap: "Maha Mrityunjaya Jaap", KundaliMilan: "Kundali Milan",
+  GrahaShanti: "Graha Shanti", Rudrabhishek: "Rudrabhishek",
+};
 const DISTRICTS = ["सभी जिले", "लखनऊ", "आगरा", "वाराणसी", "कानपुर", "इलाहाबाद", "मेरठ", "गोरखपुर", "फैजाबाद", "बरेली"];
 
 function StarRating({ avg, count }: { avg: number; count: number }) {
@@ -118,11 +138,11 @@ export default function BrowsePage() {
           </div>
 
           {/* Filter tabs */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 0 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 0, overflowX: "auto" }}>
             {TYPES.map(t => (
               <button key={t} onClick={() => setActiveType(t)}
-                style={{ padding: "8px 18px", borderRadius: "8px 8px 0 0", border: "none", fontWeight: 700, fontSize: 14, cursor: "pointer", background: activeType === t ? "#b5451b" : "#f5f5f5", color: activeType === t ? "#fff" : "#555", borderBottom: activeType === t ? "2px solid #b5451b" : "2px solid transparent" }}>
-                {ICONS[t] || "🎊"} {t}
+                style={{ padding: "8px 14px", borderRadius: "8px 8px 0 0", border: "none", fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", background: activeType === t ? "#b5451b" : "#f5f5f5", color: activeType === t ? "#fff" : "#555", borderBottom: activeType === t ? "2px solid #b5451b" : "2px solid transparent" }}>
+                {ICONS[t] || "🎊"} {SERVICE_LABELS[t] || t}
               </button>
             ))}
           </div>
@@ -170,7 +190,7 @@ export default function BrowsePage() {
                       </div>
                       {/* Info */}
                       <div style={{ padding: "14px" }}>
-                        <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{ICONS[s.service_type]} {s.service_type} · 📍 {s.vendors?.district}, {s.vendors?.block}</p>
+                        <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{ICONS[s.service_type] || "🙏"} {SERVICE_LABELS[s.service_type] || s.service_type} · 📍 {s.vendors?.district}, {s.vendors?.block}</p>
                         <h3 style={{ fontSize: 15, fontWeight: 800, color: "#111", marginBottom: 4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const }}>{s.name}</h3>
                         <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>🏪 {s.vendors?.business_name}</p>
                         <StarRating avg={s.ratingInfo?.avg || 0} count={s.ratingInfo?.count || 0} />
