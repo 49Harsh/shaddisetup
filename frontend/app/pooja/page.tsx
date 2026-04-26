@@ -1,6 +1,6 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
 type RatingInfo = { avg: number; count: number };
@@ -29,8 +29,153 @@ export const POOJA_META: Record<string, { label: string; icon: string; desc: str
   Rudrabhishek:       { label: "Rudrabhishek",          icon: "🙏",  desc: "Shiv ji ki special pooja" },
 };
 
-const ALL_TYPES = ["सभी", ...Object.keys(POOJA_META)];
 const DISTRICTS = ["सभी जिले","लखनऊ","आगरा","वाराणसी","कानपुर","इलाहाबाद","मेरठ","गोरखपुर","फैजाबाद","बरेली"];
+
+/* ── Custom Pooja-Type Dropdown ── */
+function PoojaTypeDropdown({
+  value, onChange
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const selectedMeta = value === "सभी" ? null : POOJA_META[value];
+  const displayLabel = selectedMeta
+    ? `${selectedMeta.icon} ${selectedMeta.label}`
+    : "🌸 सभी Pooja Types";
+
+  return (
+    <div ref={ref} style={{ position: "relative", minWidth: 220, flex: 1 }}>
+      {/* Trigger button */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: "100%",
+          padding: "10px 16px",
+          borderRadius: 8,
+          border: "none",
+          background: "#fff",
+          color: "#1a1a1a",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
+          boxSizing: "border-box",
+          boxShadow: open ? "0 0 0 2px #b5451b" : "none",
+        }}
+      >
+        <span>{displayLabel}</span>
+        <span style={{ fontSize: 11, color: "#b5451b", transition: "transform 0.2s", display: "inline-block", transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+      </button>
+
+      {/* Dropdown Panel */}
+      {open && (
+        <div style={{
+          position: "absolute",
+          top: "calc(100% + 6px)",
+          left: 0,
+          zIndex: 999,
+          background: "#fff",
+          borderRadius: 12,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
+          border: "1.5px solid #f0e8df",
+          minWidth: 280,
+          maxHeight: 380,
+          overflowY: "auto",
+          padding: "6px 0",
+        }}>
+          {/* "Sabhi" option */}
+          <button
+            onClick={() => { onChange("सभी"); setOpen(false); }}
+            style={{
+              width: "100%",
+              padding: "10px 16px",
+              background: value === "सभी" ? "#fdf0e0" : "transparent",
+              border: "none",
+              cursor: "pointer",
+              textAlign: "left",
+              fontSize: 14,
+              fontWeight: value === "सभी" ? 700 : 500,
+              color: value === "सभी" ? "#b5451b" : "#333",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <span style={{ fontSize: 18 }}>🌸</span>
+            <span>सभी Pooja Types</span>
+          </button>
+
+          {/* Divider */}
+          <div style={{ height: 1, background: "#f0e8df", margin: "4px 12px" }} />
+
+          {/* Each Pooja Type */}
+          {Object.entries(POOJA_META).map(([key, meta]) => (
+            <button
+              key={key}
+              onClick={() => { onChange(key); setOpen(false); }}
+              style={{
+                width: "100%",
+                padding: "10px 16px",
+                background: value === key ? "#fdf0e0" : "transparent",
+                border: "none",
+                cursor: "pointer",
+                textAlign: "left",
+                fontSize: 14,
+                fontWeight: value === key ? 700 : 500,
+                color: value === key ? "#b5451b" : "#333",
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                transition: "background 0.15s",
+              }}
+              onMouseEnter={e => { if (value !== key) (e.currentTarget as HTMLButtonElement).style.background = "#fdf8f3"; }}
+              onMouseLeave={e => { if (value !== key) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+            >
+              <span style={{ fontSize: 18, flexShrink: 0 }}>{meta.icon}</span>
+              <div>
+                <div style={{ fontWeight: 700 }}>{meta.label}</div>
+                <div style={{ fontSize: 11, color: "#999", marginTop: 1 }}>{meta.desc}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Shared Select Style ── */
+const selectStyle: React.CSSProperties = {
+  padding: "10px 14px",
+  borderRadius: 8,
+  border: "none",
+  fontSize: 14,
+  background: "#fff",
+  color: "#1a1a1a",
+  fontWeight: 600,
+  cursor: "pointer",
+  appearance: "none" as const,
+  WebkitAppearance: "none" as const,
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b5451b' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "right 12px center",
+  paddingRight: 34,
+};
 
 function StarRating({ avg, count }: { avg: number; count: number }) {
   const full = Math.floor(avg);
@@ -101,7 +246,7 @@ export default function PoojaPage() {
   return (
     <div style={{ minHeight: "80vh", background: "#fdf8f3" }}>
       {/* ── Header ── */}
-      <div style={{ background: "linear-gradient(135deg,#7c2d12 0%,#b5451b 60%,#ea7c42 100%)", padding: "36px 20px 0", color: "#fff" }}>
+      <div style={{ background: "linear-gradient(135deg,#7c2d12 0%,#b5451b 60%,#ea7c42 100%)", padding: "36px 20px 28px", color: "#fff" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontSize: 13, opacity: 0.8, marginBottom: 6 }}>
             <Link href="/" style={{ color: "#fcd9b6", textDecoration: "none" }}>होम</Link>
@@ -112,43 +257,72 @@ export default function PoojaPage() {
             Griha Pravesh से Rudrabhishek तक — अपने घर बैठे Expert Pandit Book करें
           </p>
 
-          {/* Search + Filters */}
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16, alignItems: "center" }}>
+          {/* ── Search + Filters Row ── */}
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+
+            {/* Search */}
             <input
               value={search} onChange={e => setSearch(e.target.value)}
               placeholder="🔍 Pooja या Pandit का नाम खोजें..."
-              style={{ flex: 1, minWidth: 220, padding: "10px 16px", borderRadius: 8, border: "none", fontSize: 15, boxSizing: "border-box" as const, outline: "none" }}
+              style={{
+                flex: 2, minWidth: 220,
+                padding: "10px 16px", borderRadius: 8, border: "none",
+                fontSize: 15, boxSizing: "border-box", outline: "none",
+                color: "#1a1a1a", background: "#fff",
+              }}
             />
-            <select value={district} onChange={e => setDistrict(e.target.value)}
-              style={{ padding: "10px 14px", borderRadius: 8, border: "none", fontSize: 14, background: "#fff", cursor: "pointer" }}>
-              {DISTRICTS.map(d => <option key={d}>{d}</option>)}
-            </select>
-            <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)}
-              style={{ padding: "10px 14px", borderRadius: 8, border: "none", fontSize: 14, background: "#fff", cursor: "pointer" }}>
-              <option value="popular">🔥 Popular</option>
-              <option value="rating">⭐ Rating</option>
-              <option value="price_low">💰 Price: Low–High</option>
-              <option value="price_high">💎 Price: High–Low</option>
-            </select>
+
+            {/* Pooja Type Custom Dropdown */}
+            <PoojaTypeDropdown value={activeType} onChange={setActiveType} />
+
+            {/* District Select */}
+            <div style={{ position: "relative" }}>
+              <select
+                value={district}
+                onChange={e => setDistrict(e.target.value)}
+                style={selectStyle}
+              >
+                {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+
+            {/* Sort Select */}
+            <div style={{ position: "relative" }}>
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value as typeof sortBy)}
+                style={selectStyle}
+              >
+                <option value="popular">🔥 Popular</option>
+                <option value="rating">⭐ Rating</option>
+                <option value="price_low">💰 Price: Low–High</option>
+                <option value="price_high">💎 Price: High–Low</option>
+              </select>
+            </div>
+
           </div>
 
-          {/* Type Tabs */}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", paddingBottom: 0, overflowX: "auto" }}>
-            {ALL_TYPES.map(t => {
-              const meta = POOJA_META[t];
-              return (
-                <button key={t} onClick={() => setActiveType(t)}
-                  style={{
-                    padding: "8px 16px", borderRadius: "8px 8px 0 0", border: "none",
-                    fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap",
-                    background: activeType === t ? "#fff" : "rgba(255,255,255,0.15)",
-                    color: activeType === t ? "#b5451b" : "#fff",
-                  }}>
-                  {meta ? `${meta.icon} ${meta.label}` : "🌸 सभी"}
-                </button>
-              );
-            })}
-          </div>
+          {/* Active filter badge */}
+          {activeType !== "सभी" && (
+            <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 13, opacity: 0.85 }}>Filter:</span>
+              <span style={{
+                background: "rgba(255,255,255,0.25)",
+                border: "1px solid rgba(255,255,255,0.5)",
+                borderRadius: 20,
+                padding: "3px 12px",
+                fontSize: 13,
+                fontWeight: 700,
+                display: "flex", alignItems: "center", gap: 6,
+              }}>
+                {POOJA_META[activeType]?.icon} {POOJA_META[activeType]?.label}
+                <button
+                  onClick={() => setActiveType("सभी")}
+                  style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: 14, padding: 0, lineHeight: 1, marginLeft: 2 }}
+                >×</button>
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
