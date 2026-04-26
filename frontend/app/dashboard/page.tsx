@@ -26,7 +26,7 @@ export default function Dashboard() {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/vendors`)
       .then(r => r.json()).then(setVendors).catch(() => {});
 
-    if (parsed.role === "vendor") {
+    if (parsed.role === "vendor" || parsed.role === "pandit") {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services/vendor/my`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       }).then(r => r.json()).then(d => setMyServices(Array.isArray(d) ? d : [])).catch(() => {});
@@ -72,16 +72,16 @@ export default function Dashboard() {
             <p style={{ fontSize: 14, opacity: 0.85, marginBottom: 4 }}>नमस्ते 👋</p>
             <h1 style={{ fontSize: 26, fontWeight: 900, marginBottom: 6 }}>{user.full_name || user.email}</h1>
             <span style={{ background: "rgba(255,255,255,0.2)", padding: "4px 14px", borderRadius: 20, fontSize: 13, fontWeight: 700 }}>
-              {user.role === "vendor" ? "🏪 Vendor" : user.role === "admin" ? "⚙️ Admin" : "👤 User"}
+              {user.role === "vendor" ? "🏪 Vendor" : user.role === "pandit" ? "🕉️ Pandit" : user.role === "admin" ? "⚙️ Admin" : "👤 User"}
             </span>
           </div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            {user.role === "vendor" && (
+            {(user.role === "vendor" || user.role === "pandit") && (
               <Link href="/vendor/services" style={{ background: "#fff", color: "#b5451b", padding: "10px 20px", borderRadius: 8, fontWeight: 800, fontSize: 14, textDecoration: "none" }}>
                 + Service Add करें
               </Link>
             )}
-            {user.role === "vendor" && (
+            {(user.role === "vendor" || user.role === "pandit") && (
               <Link href="/vendor/orders" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", padding: "10px 20px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", border: "1.5px solid rgba(255,255,255,0.3)" }}>
                 📋 Orders देखें
               </Link>
@@ -98,7 +98,7 @@ export default function Dashboard() {
         </div>
 
         {/* Vendor: My Services Section */}
-        {user.role === "vendor" && (
+        {(user.role === "vendor" || user.role === "pandit") && (
           <div style={{ background: "#fff", borderRadius: 16, padding: "24px", border: "1.5px solid #eee", marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
               <h2 style={{ fontSize: 20, fontWeight: 800, color: "#111" }}>मेरी Services ({myServices.length})</h2>

@@ -9,7 +9,7 @@ type Service = {
   id: string; name: string; service_type: string;
   actual_price: number; selling_price: number;
   description: string; main_image: string; images: string[];
-  vendors: { business_name: string; phone: string; district: string; block: string };
+  vendors: { business_name: string; phone: string; district: string; block: string; village: string | null };
   ratingInfo?: RatingInfo;
 };
 
@@ -190,9 +190,11 @@ export default function BrowsePage() {
                       </div>
                       {/* Info */}
                       <div style={{ padding: "14px" }}>
-                        <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{ICONS[s.service_type] || "🙏"} {SERVICE_LABELS[s.service_type] || s.service_type} · 📍 {s.vendors?.district}, {s.vendors?.block}</p>
+                        <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{ICONS[s.service_type] || "🙏"} {SERVICE_LABELS[s.service_type] || s.service_type} · 📍 {s.vendors?.district}, {s.vendors?.block}{s.vendors?.village ? `, ${s.vendors.village}` : ""}</p>
                         <h3 style={{ fontSize: 15, fontWeight: 800, color: "#111", marginBottom: 4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const }}>{s.name}</h3>
-                        <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>🏪 {s.vendors?.business_name}</p>
+                        <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>
+                          {["BhoomiPooja", "GrihaPravesh", "VastuShanti", "VahaanPooja", "DukaanUdghatan", "SatyanarayanKatha", "GaneshChaturthi", "LakshmiPooja", "NavratriPooja", "MahaMrityunjayaJaap", "KundaliMilan", "GrahaShanti", "Rudrabhishek"].includes(s.service_type) ? "🕉️" : "🏪"} {s.vendors?.business_name}
+                        </p>
                         <StarRating avg={s.ratingInfo?.avg || 0} count={s.ratingInfo?.count || 0} />
                         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 10 }}>
                           <span style={{ fontSize: 18, fontWeight: 900, color: "#b5451b" }}>₹{s.selling_price.toLocaleString()}</span>

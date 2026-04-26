@@ -26,7 +26,8 @@ export default function VendorOrdersPage() {
   useEffect(() => {
     const u = localStorage.getItem("user");
     if (!u) { router.push("/login"); return; }
-    if (JSON.parse(u).role !== "vendor") { router.push("/dashboard"); return; }
+    const role = JSON.parse(u).role;
+    if (role !== "vendor" && role !== "pandit") { router.push("/dashboard"); return; }
     fetchOrders();
   }, []);
 

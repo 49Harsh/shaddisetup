@@ -45,7 +45,7 @@ export default function CompleteProfile() {
       role: form.role,
     };
 
-    if (form.role === "vendor") {
+    if (form.role === "vendor" || form.role === "pandit") {
       body.business_name = form.business_name;
       body.service_types = form.service_types.split(",").map(s => s.trim());
     }
@@ -101,16 +101,31 @@ export default function CompleteProfile() {
           <label style={labelStyle}>आप कौन हैं? *</label>
           <select style={inputStyle} value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
             <option value="user">User — सेवाएं बुक करना है</option>
-            <option value="vendor">Vendor — अपनी सेवाएं देना है</option>
+            <option value="vendor">Vendor — अपनी सेवाएं देना है (DJ, Tent etc.)</option>
+            <option value="pandit">Pandit — पूजा पाठ सेवाएं देना है</option>
           </select>
 
-          {form.role === "vendor" && (
+          {(form.role === "vendor" || form.role === "pandit") && (
             <>
-              <label style={labelStyle}>बिज़नेस का नाम *</label>
-              <input style={inputStyle} value={form.business_name} onChange={e => setForm({ ...form, business_name: e.target.value })} placeholder="शर्मा टेंट हाउस" required />
+              <label style={labelStyle}>
+                {form.role === "pandit" ? "पंडित का नाम / संस्था का नाम *" : "बिज़नेस का नाम *"}
+              </label>
+              <input 
+                style={inputStyle} 
+                value={form.business_name} 
+                onChange={e => setForm({ ...form, business_name: e.target.value })} 
+                placeholder={form.role === "pandit" ? "पंडित राम दत्त शास्त्री" : "शर्मा टेंट हाउस"} 
+                required 
+              />
 
               <label style={labelStyle}>सेवाएं (comma से अलग करें) *</label>
-              <input style={inputStyle} value={form.service_types} onChange={e => setForm({ ...form, service_types: e.target.value })} placeholder="Decoration, Catering, DJ" required />
+              <input 
+                style={inputStyle} 
+                value={form.service_types} 
+                onChange={e => setForm({ ...form, service_types: e.target.value })} 
+                placeholder={form.role === "pandit" ? "BhoomiPooja, GrihaPravesh, VastuShanti" : "Decoration, Catering, DJ"} 
+                required 
+              />
             </>
           )}
 

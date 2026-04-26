@@ -97,7 +97,7 @@ export default function Navbar() {
                   <div style={{ padding: "14px 16px", borderBottom: "1px solid #f0f0f0", background: "#fafafa" }}>
                     <p style={{ fontSize: 14, fontWeight: 800, color: "#111", marginBottom: 2 }}>{displayName}</p>
                     <span style={{ fontSize: 12, background: "#b5451b", color: "#fff", padding: "2px 10px", borderRadius: 20, fontWeight: 700 }}>
-                      {user.role === "vendor" ? "🏪 Vendor" : user.role === "admin" ? "⚙️ Admin" : "👤 User"}
+                      {user.role === "vendor" ? "🏪 Vendor" : user.role === "pandit" ? "🕉️ Pandit" : user.role === "admin" ? "⚙️ Admin" : "👤 User"}
                     </span>
                   </div>
                   <Link href="/dashboard" onClick={() => setDropdownOpen(false)}
@@ -108,7 +108,7 @@ export default function Navbar() {
                     style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", color: "#333", fontSize: 15, fontWeight: 600, borderBottom: "1px solid #f0f0f0" }}>
                     📋 मेरे Orders
                   </Link>
-                  {user.role === "vendor" && (
+                  {(user.role === "vendor" || user.role === "pandit") && (
                     <Link href="/vendor/orders" onClick={() => setDropdownOpen(false)}
                       style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", color: "#333", fontSize: 15, fontWeight: 600, borderBottom: "1px solid #f0f0f0" }}>
                       � Vendor Orders

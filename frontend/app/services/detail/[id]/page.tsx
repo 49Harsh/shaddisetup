@@ -10,7 +10,7 @@ type ServiceDetail = {
   main_image: string; images: string[]; is_active: boolean;
   vendors: {
     id?: string;
-    business_name: string; phone: string; district: string; block: string;
+    business_name: string; phone: string; district: string; block: string; village: string | null;
     experience_years?: number; experience_desc?: string; working_hours?: string;
   };
 };
@@ -198,7 +198,7 @@ export default function ServiceDetailPage() {
               </span>
               <h1 style={{ fontSize: 26, fontWeight: 900, color: "#111", margin: "12px 0 6px" }}>{service.name}</h1>
               <p style={{ fontSize: 14, color: "#888", marginBottom: 8 }}>
-                🏪 {vendor?.business_name || "Unknown"} · 📍 {vendor?.district || "Unknown"}, {vendor?.block || "Unknown"}
+                {["BhoomiPooja", "GrihaPravesh", "VastuShanti", "VahaanPooja", "DukaanUdghatan", "SatyanarayanKatha", "GaneshChaturthi", "LakshmiPooja", "NavratriPooja", "MahaMrityunjayaJaap", "KundaliMilan", "GrahaShanti", "Rudrabhishek"].includes(service.service_type) ? "🕉️" : "🏪"} {vendor?.business_name || "Unknown"} · 📍 {vendor?.district || "Unknown"}, {vendor?.block || "Unknown"}{vendor?.village ? `, ${vendor.village}` : ""}
               </p>
 
               {/* Rating Summary */}

@@ -24,7 +24,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         ...(type ? { service_type: type as SType } : {}),
         ...(district ? { vendors: { district: String(district) } } : {}),
       },
-      include: { vendors: { select: { business_name: true, phone: true, district: true, block: true, working_hours: true, experience_years: true, experience_desc: true } } },
+      include: { vendors: { select: { business_name: true, phone: true, village: true, district: true, block: true, working_hours: true, experience_years: true, experience_desc: true } } },
       orderBy: { created_at: "desc" },
     });
     res.json(services);
@@ -32,7 +32,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
 });
 
 // GET /api/services/vendor/my — vendor ki apni services
-router.get("/vendor/my", authenticate, requireRole("vendor"), async (req: AuthRequest, res: Response): Promise<void> => {
+router.get("/vendor/my", authenticate, requireRole("vendor", "pandit"), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const vendor = await prisma.vendor.findUnique({ where: { user_id: req.userId } });
     if (!vendor) { res.status(404).json({ error: "Vendor nahi mila." }); return; }
@@ -49,7 +49,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
   try {
     const service = await prisma.vendor_services.findUnique({
       where: { id: req.params.id },
-      include: { vendors: { select: { business_name: true, phone: true, district: true, block: true, working_hours: true, experience_years: true, experience_desc: true } } },
+      include: { vendors: { select: { business_name: true, phone: true, village: true, district: true, block: true, working_hours: true, experience_years: true, experience_desc: true } } },
     });
     if (!service) { res.status(404).json({ error: "Service nahi mili." }); return; }
     res.json(service);
@@ -57,7 +57,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
 });
 
 // POST /api/services — vendor: nai service
-router.post("/", authenticate, requireRole("vendor"),
+router.post("/", authenticate, requireRole("vendor", "pandit"),
   upload.fields([{ name: "main_image", maxCount: 1 }, { name: "images", maxCount: 5 }]),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
@@ -83,7 +83,7 @@ router.post("/", authenticate, requireRole("vendor"),
 );
 
 // PUT /api/services/:id — vendor: update
-router.put("/:id", authenticate, requireRole("vendor"),
+router.put("/:id", authenticate, requireRole("vendor", "pandit"),
   upload.fields([{ name: "main_image", maxCount: 1 }, { name: "images", maxCount: 5 }]),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
@@ -110,7 +110,7 @@ router.put("/:id", authenticate, requireRole("vendor"),
 );
 
 // PATCH /api/services/:id/toggle
-router.patch("/:id/toggle", authenticate, requireRole("vendor"), async (req: AuthRequest, res: Response): Promise<void> => {
+router.patch("/:id/toggle", authenticate, requireRole("vendor", "pandit"), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const vendor = await prisma.vendor.findUnique({ where: { user_id: req.userId } });
     if (!vendor) { res.status(404).json({ error: "Vendor nahi mila." }); return; }
@@ -122,7 +122,7 @@ router.patch("/:id/toggle", authenticate, requireRole("vendor"), async (req: Aut
 });
 
 // DELETE /api/services/:id
-router.delete("/:id", authenticate, requireRole("vendor"), async (req: AuthRequest, res: Response): Promise<void> => {
+router.delete("/:id", authenticate, requireRole("vendor", "pandit"), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const vendor = await prisma.vendor.findUnique({ where: { user_id: req.userId } });
     if (!vendor) { res.status(404).json({ error: "Vendor nahi mila." }); return; }

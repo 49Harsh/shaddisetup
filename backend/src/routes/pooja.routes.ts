@@ -47,6 +47,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
             phone: true,
             district: true,
             block: true,
+            village: true,
             working_hours: true,
             experience_years: true,
             experience_desc: true,
@@ -68,7 +69,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
 router.get(
   "/vendor/my",
   authenticate,
-  requireRole("vendor"),
+  requireRole("vendor", "pandit"),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const vendor = await prisma.vendor.findUnique({ where: { user_id: req.userId } });
@@ -106,6 +107,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
             phone: true,
             district: true,
             block: true,
+            village: true,
             working_hours: true,
             experience_years: true,
             experience_desc: true,
@@ -127,7 +129,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
 router.post(
   "/",
   authenticate,
-  requireRole("vendor"),
+  requireRole("vendor", "pandit"),
   upload.fields([{ name: "main_image", maxCount: 1 }, { name: "images", maxCount: 5 }]),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
@@ -179,7 +181,7 @@ router.post(
 router.put(
   "/:id",
   authenticate,
-  requireRole("vendor"),
+  requireRole("vendor", "pandit"),
   upload.fields([{ name: "main_image", maxCount: 1 }, { name: "images", maxCount: 5 }]),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
@@ -238,7 +240,7 @@ router.put(
 router.patch(
   "/:id/toggle",
   authenticate,
-  requireRole("vendor"),
+  requireRole("vendor", "pandit"),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const vendor = await prisma.vendor.findUnique({ where: { user_id: req.userId } });
@@ -271,7 +273,7 @@ router.patch(
 router.delete(
   "/:id",
   authenticate,
-  requireRole("vendor"),
+  requireRole("vendor", "pandit"),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const vendor = await prisma.vendor.findUnique({ where: { user_id: req.userId } });

@@ -90,17 +90,17 @@ router.post("/complete-profile", async (req: Request, res: Response): Promise<vo
         district,
         pincode,
         village: village || null,
-        role: role === "vendor" ? "vendor" : "user",
+        role: role === "vendor" || role === "pandit" ? role : "user",
       },
     });
 
-    // Agar vendor role chuna toh vendors table mein bhi entry
-    if (role === "vendor") {
+    // Agar vendor ya pandit role chuna toh vendors table mein bhi entry
+    if (role === "vendor" || role === "pandit") {
       const { business_name, service_types, experience_years } = req.body;
       await prisma.vendor.upsert({
         where: { user_id: userId },
-        update: { business_name, service_types, experience_years, block, district, phone },
-        create: { user_id: userId, business_name, service_types, experience_years, block, district, phone },
+        update: { business_name, service_types, experience_years, block, district, village: village || null, phone },
+        create: { user_id: userId, business_name, service_types, experience_years, block, district, village: village || null, phone },
       });
     }
 
@@ -111,8 +111,12 @@ router.post("/complete-profile", async (req: Request, res: Response): Promise<vo
     );
 
     res.json({ token, user: updated });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
+    if (err.code === "P2002" && err.meta?.target?.includes("phone")) {
+      res.status(400).json({ error: "यह मोबाइल नंबर पहले से रजिस्टर है। कृपया दूसरा नंबर इस्तेमाल करें।" });
+      return;
+    }
     res.status(500).json({ error: "Profile update mein error." });
   }
 });

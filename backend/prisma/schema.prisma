@@ -122,6 +122,7 @@ model orders {
 enum Role {
   user
   vendor
+  pandit
   admin
 }
 
