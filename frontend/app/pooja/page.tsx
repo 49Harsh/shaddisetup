@@ -2,6 +2,8 @@
 export const dynamic = "force-dynamic";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useLang } from "@/lib/langContext";
+import { tr } from "@/lib/translations";
 
 type RatingInfo = { avg: number; count: number };
 
@@ -29,14 +31,16 @@ export const POOJA_META: Record<string, { label: string; icon: string; desc: str
   Rudrabhishek:       { label: "Rudrabhishek",          icon: "🙏",  desc: "Shiv ji ki special pooja" },
 };
 
-const DISTRICTS = ["सभी जिले","लखनऊ","आगरा","वाराणसी","कानपुर","इलाहाबाद","मेरठ","गोरखपुर","फैजाबाद","बरेली"];
+const DISTRICTS_EN = ["All Districts","Lucknow","Agra","Varanasi","Kanpur","Allahabad","Meerut","Gorakhpur","Faizabad","Bareilly"];
+const DISTRICTS_HI = ["सभी जिले","लखनऊ","आगरा","वाराणसी","कानपुर","इलाहाबाद","मेरठ","गोरखपुर","फैजाबाद","बरेली"];
 
 /* ── Custom Pooja-Type Dropdown ── */
 function PoojaTypeDropdown({
-  value, onChange
+  value, onChange, lang
 }: {
   value: string;
   onChange: (v: string) => void;
+  lang: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -50,10 +54,11 @@ function PoojaTypeDropdown({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const selectedMeta = value === "सभी" ? null : POOJA_META[value];
+  const ALL_LABEL = lang === "en" ? "All" : "सभी";
+  const selectedMeta = (value === ALL_LABEL || value === "All" || value === "सभी") ? null : POOJA_META[value];
   const displayLabel = selectedMeta
     ? `${selectedMeta.icon} ${selectedMeta.label}`
-    : "🌸 सभी Pooja Types";
+    : lang === "en" ? "🌸 All Pooja Types" : "🌸 सभी Pooja Types";
 
   return (
     <div ref={ref} style={{ position: "relative", minWidth: 220, flex: 1 }}>
@@ -100,24 +105,24 @@ function PoojaTypeDropdown({
         }}>
           {/* "Sabhi" option */}
           <button
-            onClick={() => { onChange("सभी"); setOpen(false); }}
+            onClick={() => { onChange(ALL_LABEL); setOpen(false); }}
             style={{
               width: "100%",
               padding: "10px 16px",
-              background: value === "सभी" ? "#fdf0e0" : "transparent",
+              background: value === ALL_LABEL ? "#fdf0e0" : "transparent",
               border: "none",
               cursor: "pointer",
               textAlign: "left",
               fontSize: 14,
-              fontWeight: value === "सभी" ? 700 : 500,
-              color: value === "सभी" ? "#b5451b" : "#333",
+              fontWeight: value === ALL_LABEL ? 700 : 500,
+              color: value === ALL_LABEL ? "#b5451b" : "#333",
               display: "flex",
               alignItems: "center",
               gap: 10,
             }}
           >
             <span style={{ fontSize: 18 }}>🌸</span>
-            <span>सभी Pooja Types</span>
+            <span>{ lang === "en" ? "All Pooja Types" : "सभी Pooja Types"}</span>
           </button>
 
           {/* Divider */}
@@ -195,11 +200,16 @@ function StarRating({ avg, count }: { avg: number; count: number }) {
 }
 
 export default function PoojaPage() {
+  const { lang } = useLang();
+  const t = (k: { en: string; hi: string }) => k[lang];
+  const DISTRICTS = lang === "en" ? DISTRICTS_EN : DISTRICTS_HI;
+  const ALL_LABEL = lang === "en" ? "All" : "सभी";
+
   const [services, setServices] = useState<PoojaService[]>([]);
   const [filtered, setFiltered]  = useState<PoojaService[]>([]);
-  const [activeType, setActiveType] = useState("सभी");
+  const [activeType, setActiveType] = useState(ALL_LABEL);
   const [search, setSearch]   = useState("");
-  const [district, setDistrict] = useState("सभी जिले");
+  const [district, setDistrict] = useState(DISTRICTS[0]);
   const [sortBy, setSortBy]   = useState<"popular"|"rating"|"price_low"|"price_high">("popular");
   const [loading, setLoading] = useState(true);
 
@@ -226,8 +236,14 @@ export default function PoojaPage() {
 
   useEffect(() => {
     let result = [...services];
-    if (activeType !== "सभी") result = result.filter(s => s.service_type === activeType);
-    if (district !== "सभी जिले") result = result.filter(s => s.vendors?.district?.includes(district));
+    const isAll = activeType === "All" || activeType === "सभी";
+    if (!isAll) result = result.filter(s => s.service_type === activeType);
+    const isAllDist = district === "All Districts" || district === "सभी जिले";
+    if (!isAllDist) {
+      const distMap: Record<string, string> = { "Lucknow": "लखनऊ", "Agra": "आगरा", "Varanasi": "वाराणसी", "Kanpur": "कानपुर", "Allahabad": "इलाहाबाद", "Meerut": "मेरठ", "Gorakhpur": "गोरखपुर", "Faizabad": "फैजाबाद", "Bareilly": "बरेली" };
+      const searchDist = distMap[district] || district;
+      result = result.filter(s => s.vendors?.district?.includes(district) || s.vendors?.district?.includes(searchDist));
+    }
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(s =>
@@ -249,13 +265,11 @@ export default function PoojaPage() {
       <div style={{ background: "linear-gradient(135deg,#7c2d12 0%,#b5451b 60%,#ea7c42 100%)", padding: "36px 20px 28px", color: "#fff" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontSize: 13, opacity: 0.8, marginBottom: 6 }}>
-            <Link href="/" style={{ color: "#fcd9b6", textDecoration: "none" }}>होम</Link>
+            <Link href="/" style={{ color: "#fcd9b6", textDecoration: "none" }}>{t(tr.home)}</Link>
             {" → "}Pooja Services
           </p>
-          <h1 style={{ fontSize: 32, fontWeight: 900, marginBottom: 6 }}>🙏 Pooja Services Book करें</h1>
-          <p style={{ fontSize: 15, opacity: 0.85, marginBottom: 20 }}>
-            Griha Pravesh से Rudrabhishek तक — अपने घर बैठे Expert Pandit Book करें
-          </p>
+          <h1 style={{ fontSize: 32, fontWeight: 900, marginBottom: 6 }}>🙏 {t(tr.poojaTitle)}</h1>
+          <p style={{ fontSize: 15, opacity: 0.85, marginBottom: 20 }}>{t(tr.poojaDesc)}</p>
 
           {/* ── Search + Filters Row ── */}
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
@@ -263,7 +277,7 @@ export default function PoojaPage() {
             {/* Search */}
             <input
               value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="🔍 Pooja या Pandit का नाम खोजें..."
+              placeholder={t(tr.poojaSearch)}
               style={{
                 flex: 2, minWidth: 220,
                 padding: "10px 16px", borderRadius: 8, border: "none",
@@ -273,7 +287,7 @@ export default function PoojaPage() {
             />
 
             {/* Pooja Type Custom Dropdown */}
-            <PoojaTypeDropdown value={activeType} onChange={setActiveType} />
+            <PoojaTypeDropdown value={activeType} onChange={setActiveType} lang={lang} />
 
             {/* District Select */}
             <div style={{ position: "relative" }}>
@@ -331,17 +345,17 @@ export default function PoojaPage() {
         {loading ? (
           <div style={{ textAlign: "center", padding: 80 }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
-            <p style={{ color: "#aaa", fontSize: 18 }}>लोड हो रहा है...</p>
+            <p style={{ color: "#aaa", fontSize: 18 }}>{t(tr.loading)}</p>
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: 80, background: "#fff", borderRadius: 16, border: "1.5px solid #eee" }}>
             <div style={{ fontSize: 56, marginBottom: 12 }}>🙏</div>
-            <p style={{ fontSize: 18, color: "#777", marginBottom: 8 }}>कोई Pooja service नहीं मिली</p>
-            <p style={{ fontSize: 14, color: "#aaa" }}>जल्द ही नए Pandit register होंगे!</p>
+            <p style={{ fontSize: 18, color: "#777", marginBottom: 8 }}>{t(tr.noPoojaFound)}</p>
+            <p style={{ fontSize: 14, color: "#aaa" }}>{t(tr.poojaComingSoon)}</p>
           </div>
         ) : (
           <>
-            <p style={{ fontSize: 14, color: "#888", marginBottom: 20 }}>{filtered.length} Pooja services मिले</p>
+            <p style={{ fontSize: 14, color: "#888", marginBottom: 20 }}>{filtered.length} {t(tr.poojaResults)}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 22 }}>
               {filtered.map(s => {
                 const meta = POOJA_META[s.service_type] || { label: s.service_type, icon: "🙏", desc: "" };
@@ -388,7 +402,7 @@ export default function PoojaPage() {
                           {disc > 0 && <span style={{ fontSize: 12, color: "#aaa", textDecoration: "line-through" }}>₹{s.actual_price.toLocaleString()}</span>}
                         </div>
                         <div style={{ marginTop: 10, background: "linear-gradient(90deg,#b5451b,#ea7c42)", color: "#fff", padding: "9px", borderRadius: 8, textAlign: "center", fontWeight: 700, fontSize: 13 }}>
-                          🙏 Book करें →
+                          {t(tr.bookPooja)}
                         </div>
                       </div>
                     </div>

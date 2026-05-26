@@ -1,21 +1,26 @@
-const contacts = [
-  { icon: "💬", title: "WhatsApp", desc: "+91 99999 99999", link: "https://wa.me/919999999999", linkText: "WhatsApp पर मैसेज करें" },
-  { icon: "📞", title: "फोन कॉल", desc: "+91 99999 99999", link: "tel:+919999999999", linkText: "अभी कॉल करें" },
-  { icon: "📧", title: "ईमेल", desc: "info@shaadisetup.com", link: "mailto:info@shaadisetup.com", linkText: "ईमेल भेजें" },
-  { icon: "📍", title: "पता", desc: "दिल्ली, भारत", link: "https://maps.google.com", linkText: "मैप पर देखें" },
-];
+"use client";
+import { useLang } from "@/lib/langContext";
+import { tr } from "@/lib/translations";
 
 export default function ContactPage() {
+  const { lang } = useLang();
+  const t = (k: { en: string; hi: string }) => k[lang];
+
+  const contacts = [
+    { icon: "💬", title: t(tr.contacts.wa.title), desc: "+91 80974 76088", link: "https://wa.me/918097476088", linkText: t(tr.contacts.wa.link) },
+    { icon: "📞", title: t(tr.contacts.phone.title), desc: "+91 80974 76088", link: "tel:+918097476088", linkText: t(tr.contacts.phone.link) },
+    { icon: "📧", title: t(tr.contacts.email.title), desc: "shaadisetup@gmail.com", link: "mailto:shaadisetup@gmail.com", linkText: t(tr.contacts.email.link) },
+    { icon: "📍", title: t(tr.contacts.addr.title), desc: lang === "en" ? "Office No. 6,Plot No. 3A,  Sairama Realestate, Sector 02, Kharghar, Navi Mumbai, Maharashtra 410210" : "Office No. 6,Plot No. 3A,  Sairama Realestate, Sector 02, Kharghar, Navi Mumbai, Maharashtra 410210", link: "https://maps.google.com", linkText: t(tr.contacts.addr.link) },
+  ];
+
   return (
     <div>
       <section style={{ background: "#fff", padding: "72px 20px", textAlign: "center", borderBottom: "2px solid #eee" }}>
         <div style={{ maxWidth: 650, margin: "0 auto" }}>
           <h1 style={{ fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 900, color: "#111", marginBottom: 16 }}>
-            संपर्क करें
+            {t(tr.contactTitle)}
           </h1>
-          <p style={{ fontSize: 18, color: "#555", lineHeight: 1.8 }}>
-            कोई भी सवाल हो, बुकिंग करनी हो — हम WhatsApp पर हमेशा उपलब्ध हैं।
-          </p>
+          <p style={{ fontSize: 18, color: "#555", lineHeight: 1.8 }}>{t(tr.contactDesc)}</p>
         </div>
       </section>
 
@@ -37,14 +42,12 @@ export default function ContactPage() {
 
       <section style={{ background: "#b5451b", padding: "64px 20px", textAlign: "center" }}>
         <h2 style={{ fontSize: "clamp(22px, 4vw, 36px)", fontWeight: 900, color: "#fff", marginBottom: 16 }}>
-          अभी WhatsApp पर बात करें
+          {t(tr.contactCTA)}
         </h2>
-        <p style={{ fontSize: 17, color: "rgba(255,255,255,0.9)", marginBottom: 32 }}>
-          सुबह 9 बजे से रात 10 बजे तक उपलब्ध
-        </p>
-        <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer"
+        <p style={{ fontSize: 17, color: "rgba(255,255,255,0.9)", marginBottom: 32 }}>{t(tr.contactHours)}</p>
+        <a href="https://wa.me/+918097476088" target="_blank" rel="noopener noreferrer"
           style={{ background: "#fff", color: "#b5451b", padding: "16px 40px", borderRadius: 10, fontWeight: 800, fontSize: 20, textDecoration: "none" }}>
-          💬 WhatsApp खोलें
+          {t(tr.openWA)}
         </a>
       </section>
     </div>

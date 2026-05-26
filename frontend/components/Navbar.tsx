@@ -2,17 +2,31 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import LangToggle from "./GoogleTranslate";
+import { useLang } from "@/lib/langContext";
 
-const navLinks = [
-  { href: "/", label: "होम" },
-  { href: "/browse", label: "Services देखें" },
-  { href: "/pooja", label: "🙏 Pooja" },
-  { href: "/services/decoration", label: "डेकोरेशन" },
-  { href: "/services/dj-band", label: "DJ / बैंड" },
-  { href: "/services/catering", label: "कैटरिंग" },
-  { href: "/about", label: "हमारे बारे में" },
-  { href: "/contact", label: "संपर्क करें" },
-];
+const navLinks = {
+  en: [
+    { href: "/", label: "Home" },
+    { href: "/browse", label: "Browse Services" },
+    { href: "/pooja", label: "🙏 Pooja" },
+    { href: "/services/decoration", label: "Decoration" },
+    { href: "/services/dj-band", label: "DJ / Band" },
+    { href: "/services/catering", label: "Catering" },
+    { href: "/about", label: "About Us" },
+    { href: "/contact", label: "Contact" },
+  ],
+  hi: [
+    { href: "/", label: "होम" },
+    { href: "/browse", label: "Services देखें" },
+    { href: "/pooja", label: "🙏 Pooja" },
+    { href: "/services/decoration", label: "डेकोरेशन" },
+    { href: "/services/dj-band", label: "DJ / बैंड" },
+    { href: "/services/catering", label: "कैटरिंग" },
+    { href: "/about", label: "हमारे बारे में" },
+    { href: "/contact", label: "संपर्क करें" },
+  ],
+};
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -21,8 +35,9 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const { lang } = useLang();
+  const links = navLinks[lang];
 
-  // Re-check user on every route change — fixes navbar not updating after login
   useEffect(() => {
     const u = localStorage.getItem("user");
     setUser(u ? JSON.parse(u) : null);
@@ -34,7 +49,6 @@ export default function Navbar() {
         setDropdownOpen(false);
       }
     }
-    // Also listen for storage changes (cross-tab)
     function handleStorage() {
       const u = localStorage.getItem("user");
       setUser(u ? JSON.parse(u) : null);
@@ -59,20 +73,20 @@ export default function Navbar() {
 
   return (
     <nav style={{ background: "#fff", borderBottom: "2px solid #e5e5e5", position: "sticky", top: 0, zIndex: 100 }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 70 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 }}>
 
         {/* Logo */}
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span style={{ fontSize: 26, fontWeight: 800, color: "#b5451b", letterSpacing: 1 }}>
+        <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+          <span style={{ fontSize: 22, fontWeight: 800, color: "#b5451b", letterSpacing: 1 }}>
             ShaadiSetup<span style={{ color: "#555" }}>.com</span>
           </span>
         </Link>
 
         {/* Desktop Links */}
-        <ul style={{ display: "flex", gap: 20, listStyle: "none", margin: 0 }} className="desktop-nav">
-          {navLinks.map((l) => (
-            <li key={l.href}>
-              <Link href={l.href} style={{ textDecoration: "none", color: pathname === l.href ? "#b5451b" : "#333", fontSize: 15, fontWeight: 600 }}>
+        <ul style={{ display: "flex", gap: 12, listStyle: "none", margin: "0 12px", flexWrap: "nowrap", flexShrink: 1, overflow: "hidden" }} className="desktop-nav">
+          {links.map((l) => (
+            <li key={l.href} style={{ flexShrink: 0 }}>
+              <Link href={l.href} style={{ textDecoration: "none", color: pathname === l.href ? "#b5451b" : "#333", fontSize: 13, fontWeight: 600, whiteSpace: "nowrap" }}>
                 {l.label}
               </Link>
             </li>
@@ -80,12 +94,13 @@ export default function Navbar() {
         </ul>
 
         {/* Right side */}
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }} className="desktop-nav">
+        <div style={{ display: "flex", gap: 10, alignItems: "center", flexShrink: 0 }} className="desktop-nav">
+          <LangToggle />
           {user ? (
             <div ref={dropdownRef} style={{ position: "relative" }}>
               <button onClick={() => setDropdownOpen(!dropdownOpen)}
-                style={{ background: "#f5f5f5", border: "1.5px solid #eee", borderRadius: 10, padding: "8px 16px", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 700, color: "#333" }}>
-                <span style={{ background: "#b5451b", color: "#fff", borderRadius: "50%", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800 }}>
+                style={{ background: "#f5f5f5", border: "1.5px solid #eee", borderRadius: 10, padding: "8px 16px", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 700, color: "#333", whiteSpace: "nowrap" }}>
+                <span style={{ background: "#b5451b", color: "#fff", borderRadius: "50%", width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, flexShrink: 0 }}>
                   {displayName.charAt(0).toUpperCase()}
                 </span>
                 {displayName.split(" ")[0]}
@@ -102,28 +117,28 @@ export default function Navbar() {
                   </div>
                   <Link href="/dashboard" onClick={() => setDropdownOpen(false)}
                     style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", color: "#333", fontSize: 15, fontWeight: 600, borderBottom: "1px solid #f0f0f0" }}>
-                    👤 मेरा Dashboard
+                    👤 {lang === "en" ? "My Dashboard" : "मेरा Dashboard"}
                   </Link>
                   <Link href="/my-orders" onClick={() => setDropdownOpen(false)}
                     style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", color: "#333", fontSize: 15, fontWeight: 600, borderBottom: "1px solid #f0f0f0" }}>
-                    📋 मेरे Orders
+                    📋 {lang === "en" ? "My Orders" : "मेरे Orders"}
                   </Link>
                   {(user.role === "vendor" || user.role === "pandit") && (
                     <Link href="/vendor/orders" onClick={() => setDropdownOpen(false)}
                       style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", color: "#333", fontSize: 15, fontWeight: 600, borderBottom: "1px solid #f0f0f0" }}>
-                      � Vendor Orders
+                      📦 {lang === "en" ? "Vendor Orders" : "Vendor Orders"}
                     </Link>
                   )}
                   <button onClick={logout}
                     style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", background: "none", border: "none", color: "#e53e3e", fontSize: 15, fontWeight: 600, cursor: "pointer", textAlign: "left" }}>
-                    🚪 लॉगआउट
+                    🚪 {lang === "en" ? "Logout" : "लॉगआउट"}
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <Link href="/login" style={{ background: "#b5451b", color: "#fff", padding: "10px 20px", borderRadius: 8, fontWeight: 700, fontSize: 15, textDecoration: "none" }}>
-              Login / Sign Up
+            <Link href="/login" style={{ background: "#b5451b", color: "#fff", padding: "8px 16px", borderRadius: 8, fontWeight: 700, fontSize: 13, textDecoration: "none", whiteSpace: "nowrap" }}>
+              {lang === "en" ? "Login / Sign Up" : "लॉगिन / साइन अप"}
             </Link>
           )}
         </div>
@@ -136,38 +151,41 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {open && (
         <div style={{ background: "#fff", borderTop: "1px solid #eee", padding: "16px 20px" }}>
-          {navLinks.map((l) => (
+          {links.map((l) => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
               style={{ display: "block", padding: "12px 0", fontSize: 17, fontWeight: 600, color: "#333", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>
               {l.label}
             </Link>
           ))}
+          <div style={{ padding: "12px 0", borderBottom: "1px solid #f0f0f0" }}>
+            <LangToggle />
+          </div>
           {user ? (
             <>
               <Link href="/dashboard" onClick={() => setOpen(false)}
                 style={{ display: "block", padding: "12px 0", fontSize: 17, fontWeight: 600, color: "#333", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>
-                👤 Dashboard
+                👤 {lang === "en" ? "Dashboard" : "Dashboard"}
               </Link>
               <Link href="/my-orders" onClick={() => setOpen(false)}
                 style={{ display: "block", padding: "12px 0", fontSize: 17, fontWeight: 600, color: "#333", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>
-                � मेरे Orders
+                📋 {lang === "en" ? "My Orders" : "मेरे Orders"}
               </Link>
               <button onClick={logout}
                 style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 0", fontSize: 17, fontWeight: 600, color: "#e53e3e", background: "none", border: "none", cursor: "pointer" }}>
-                🚪 लॉगआउट
+                🚪 {lang === "en" ? "Logout" : "लॉगआउट"}
               </button>
             </>
           ) : (
             <Link href="/login" onClick={() => setOpen(false)}
               style={{ display: "block", marginTop: 12, background: "#b5451b", color: "#fff", padding: "12px 20px", borderRadius: 8, fontWeight: 700, fontSize: 16, textDecoration: "none", textAlign: "center" }}>
-              Login / Sign Up
+              {lang === "en" ? "Login / Sign Up" : "लॉगिन / साइन अप"}
             </Link>
           )}
         </div>
       )}
 
       <style>{`
-        @media (max-width: 900px) {
+        @media (max-width: 1100px) {
           .desktop-nav { display: none !important; }
           .hamburger { display: block !important; }
         }

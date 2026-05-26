@@ -3,24 +3,23 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { LangProvider } from "@/lib/langContext";
 
 export const metadata: Metadata = {
-  title: "ShaadiSetup.com - शादी और इवेंट सेवाएं",
-  description: "शादी, पार्टी और इवेंट के लिए डेकोरेशन, कैटरिंग, DJ/बैंड और बहुत कुछ",
+  title: "ShaadiSetup.com - Wedding & Event Services",
+  description: "Book decoration, catering, DJ/band and more for your wedding and events",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="hi">
+    <html lang="en">
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <WhatsAppButton />
+        <LangProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+          <WhatsAppButton />
+        </LangProvider>
       </body>
     </html>
   );

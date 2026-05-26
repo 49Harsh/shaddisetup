@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", phone: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/admin-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.email.trim(), phone: form.phone.trim() }),
+        body: JSON.stringify({ email: form.email.trim(), password: form.password }),
       });
       const data = await res.json();
 
@@ -65,14 +65,14 @@ export default function AdminLoginPage() {
 
           <div style={{ marginBottom: 24 }}>
             <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#555", marginBottom: 6 }}>
-              Mobile Number
+              Password
             </label>
             <input
-              type="tel"
+              type="password"
               required
-              placeholder="9999999999"
-              value={form.phone}
-              onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+              placeholder="••••••••"
+              value={form.password}
+              onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
               style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: "1.5px solid #ddd", fontSize: 15, outline: "none", boxSizing: "border-box" }}
             />
           </div>

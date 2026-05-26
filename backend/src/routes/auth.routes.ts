@@ -122,17 +122,17 @@ router.post("/complete-profile", async (req: Request, res: Response): Promise<vo
  * Admin credentials (email + phone) env se check karke JWT deta hai
  */
 router.post("/admin-login", async (req: Request, res: Response): Promise<void> => {
-  const { email, phone } = req.body;
+  const { email, password } = req.body;
 
-  if (!email || !phone) {
-    res.status(400).json({ error: "Email aur phone dono zaroori hain." });
+  if (!email || !password) {
+    res.status(400).json({ error: "Email aur password dono zaroori hain." });
     return;
   }
 
   const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPhone = process.env.ADMIN_PHONE;
+  const adminPassword = process.env.ADMIN_PASSWORD;
 
-  if (email !== adminEmail || phone !== adminPhone) {
+  if (email !== adminEmail || password !== adminPassword) {
     res.status(401).json({ error: "Credentials galat hain." });
     return;
   }
@@ -146,7 +146,7 @@ router.post("/admin-login", async (req: Request, res: Response): Promise<void> =
         data: {
           email: adminEmail,
           full_name: "Admin",
-          phone: adminPhone,
+          phone: adminEmail, // email as unique placeholder
           block: "",
           district: "",
           pincode: "",

@@ -49,8 +49,8 @@ export default function Footer() {
         {/* Contact */}
         <div>
           <h4 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 14 }}>संपर्क</h4>
-          <p style={{ fontSize: 15, marginBottom: 8 }}>📞 +91 99999 99999</p>
-          <p style={{ fontSize: 15, marginBottom: 8 }}>📧 info@shaadisetup.com</p>
+          <p style={{ fontSize: 15, marginBottom: 8 }}>📞 +91 80974 76088</p>
+          <p style={{ fontSize: 15, marginBottom: 8 }}>📧 shaadisetup@gmail.com</p>
           <p style={{ fontSize: 15 }}>📍 दिल्ली, भारत</p>
         </div>
       </div>
