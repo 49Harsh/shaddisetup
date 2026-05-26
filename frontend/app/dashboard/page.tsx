@@ -86,6 +86,11 @@ export default function Dashboard() {
                 📋 Orders देखें
               </Link>
             )}
+            {user.role === "admin" && (
+              <Link href="/admin" style={{ background: "#fff", color: "#b5451b", padding: "10px 20px", borderRadius: 8, fontWeight: 800, fontSize: 14, textDecoration: "none" }}>
+                ⚙️ Admin Panel
+              </Link>
+            )}
             {user.role === "user" && (
               <Link href="/my-orders" style={{ background: "#fff", color: "#b5451b", padding: "10px 20px", borderRadius: 8, fontWeight: 800, fontSize: 14, textDecoration: "none" }}>
                 📋 मेरे Orders

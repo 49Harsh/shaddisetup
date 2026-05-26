@@ -18,14 +18,14 @@ router.post("/google", async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    // Supabase se user verify karo
+    // Supabase se user verify 
     const { data: { user }, error } = await supabase.auth.getUser(access_token);
     if (error || !user) {
       res.status(401).json({ error: "Invalid Supabase token." });
       return;
     }
 
-    // Check karo user already hai ya nahi
+    // Check user already 
     let dbUser = await prisma.user.findFirst({
       where: { email: user.email! },
     });
@@ -59,7 +59,7 @@ router.post("/google", async (req: Request, res: Response): Promise<void> => {
         email: dbUser.email,
         full_name: dbUser.full_name,
         role: dbUser.role,
-        profileComplete: !!(dbUser.phone && dbUser.phone !== dbUser.email && dbUser.block && dbUser.district && dbUser.pincode),
+        profileComplete: !!(dbUser.phone && dbUser.block && dbUser.district && dbUser.pincode),
       },
     });
   } catch (err) {
@@ -90,17 +90,17 @@ router.post("/complete-profile", async (req: Request, res: Response): Promise<vo
         district,
         pincode,
         village: village || null,
-        role: role === "vendor" || role === "pandit" ? role : "user",
+        role: role === "vendor" ? "vendor" : "user",
       },
     });
 
-    // Agar vendor ya pandit role chuna toh vendors table mein bhi entry
-    if (role === "vendor" || role === "pandit") {
+    // Agar vendor role chuna toh vendors table mein bhi entry
+    if (role === "vendor") {
       const { business_name, service_types, experience_years } = req.body;
       await prisma.vendor.upsert({
         where: { user_id: userId },
-        update: { business_name, service_types, experience_years, block, district, village: village || null, phone },
-        create: { user_id: userId, business_name, service_types, experience_years, block, district, village: village || null, phone },
+        update: { business_name, service_types, experience_years, block, district, phone },
+        create: { user_id: userId, business_name, service_types, experience_years, block, district, phone },
       });
     }
 
@@ -111,13 +111,72 @@ router.post("/complete-profile", async (req: Request, res: Response): Promise<vo
     );
 
     res.json({ token, user: updated });
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
-    if (err.code === "P2002" && err.meta?.target?.includes("phone")) {
-      res.status(400).json({ error: "यह मोबाइल नंबर पहले से रजिस्टर है। कृपया दूसरा नंबर इस्तेमाल करें।" });
-      return;
-    }
     res.status(500).json({ error: "Profile update mein error." });
+  }
+});
+
+/**
+ * POST /api/auth/admin-login
+ * Admin credentials (email + phone) env se check karke JWT deta hai
+ */
+router.post("/admin-login", async (req: Request, res: Response): Promise<void> => {
+  const { email, phone } = req.body;
+
+  if (!email || !phone) {
+    res.status(400).json({ error: "Email aur phone dono zaroori hain." });
+    return;
+  }
+
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPhone = process.env.ADMIN_PHONE;
+
+  if (email !== adminEmail || phone !== adminPhone) {
+    res.status(401).json({ error: "Credentials galat hain." });
+    return;
+  }
+
+  try {
+    // DB mein admin user dhundo ya banao
+    let adminUser = await prisma.user.findFirst({ where: { email: adminEmail } });
+
+    if (!adminUser) {
+      adminUser = await prisma.user.create({
+        data: {
+          email: adminEmail,
+          full_name: "Admin",
+          phone: adminPhone,
+          block: "",
+          district: "",
+          pincode: "",
+          role: "admin",
+        },
+      });
+      // admins table mein bhi entry
+      await prisma.admin.create({
+        data: { user_id: adminUser.id, admin_level: "super_admin" },
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: adminUser.id, role: "admin" },
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: adminUser.id,
+        email: adminUser.email,
+        full_name: adminUser.full_name,
+        role: "admin",
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error." });
   }
 });
 

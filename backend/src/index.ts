@@ -9,6 +9,7 @@ import serviceRoutes from "./routes/service.routes";
 import orderRoutes from "./routes/order.routes";
 import ratingRoutes from "./routes/rating.routes";
 import poojaRoutes from "./routes/pooja.routes";
+import adminRoutes from "./routes/admin.routes";
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/pooja", poojaRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
